@@ -2,6 +2,9 @@ const {
   isNumber,
   isString,
   isBoolean,
+  isArray,
+  isObject,
+  isFunction,
   castToNumber,
   castToString,
   castToBoolean,
@@ -68,31 +71,63 @@ describe('validator module', () => {
     expect(getCaster(String)).toEqual(castToString);
     expect(getCaster(Promise)).toBeNull();
   });
-});
-
-// Validate booleans and associated casters
-describe('basic validation', () => {
-  it('properly tells if a value is a boolean', () => {
-    expect(isBoolean(true)).toBeTruthy();
-    expect(isBoolean(false)).toBeTruthy();
-    expect(isBoolean('hi')).toBeFalsy();
-    expect(isBoolean(8)).toBeFalsy();
-    expect(isBoolean([])).toBeFalsy();
-    expect(isBoolean({})).toBeFalsy();
-    expect(isBoolean(() => {})).toBeFalsy();
+  
+  // Validate booleans and associated casters
+  describe('basic validation', () => {
+    it('properly tells if a value is a boolean', () => {
+      expect(isBoolean(true)).toBeTruthy();
+      expect(isBoolean(false)).toBeTruthy();
+      expect(isBoolean('hi')).toBeFalsy();
+      expect(isBoolean(8)).toBeFalsy();
+      expect(isBoolean([])).toBeFalsy();
+      expect(isBoolean({})).toBeFalsy();
+      expect(isBoolean(() => {})).toBeFalsy();
+    });
   });
-});
-
-describe('casters', () => {
-  it('can cast values to a boolean', () => {
-    expect(castToBoolean('true')).toEqual(true);
-    expect(castToBoolean('false')).toEqual(false);
-    expect(castToBoolean(1)).toEqual(true);
-    expect(castToBoolean(0)).toEqual(false);
+  
+  describe('casters', () => {
+    it('can cast values to a boolean', () => {
+      expect(castToBoolean('true')).toEqual(true);
+      expect(castToBoolean('false')).toEqual(false);
+      expect(castToBoolean(1)).toEqual(true);
+      expect(castToBoolean(0)).toEqual(false);
+    });
+    
+    it('throws if value is not castable to boolean', () => {
+      expect(() => castToBoolean('hi')).toThrowErrorMatchingSnapshot();
+      expect(() => castToBoolean({})).toThrowErrorMatchingSnapshot();
+    });
   });
 
-  it('throws if value is not castable to boolean', () => {
-    expect(() => castToBoolean('hi')).toThrowErrorMatchingSnapshot();
-    expect(() => castToBoolean({})).toThrowErrorMatchingSnapshot();
+  describe('basic validation', () => {
+    it('properly tells if a value is an array', () => {
+      expect(isArray([1, 2, 3])).toBeTruthy();
+      expect(isArray(false)).toBeFalsy();
+      expect(isArray(6)).toBeFalsy();
+      expect(isArray([])).toBeTruthy();
+      expect(isArray({})).toBeFalsy();
+      expect(isArray(() => {})).toBeFalsy();
+    });
+  });
+
+  describe('basic validation', () => {
+    it('properly tells if a value is an object', () => {
+      expect(isObject({})).toBeTruthy();
+      expect(isObject(false)).toBeFalsy();
+      expect(isObject('hi')).toBeFalsy();
+      expect(isObject(8)).toBeFalsy();
+      expect(isObject(() => {})).toBeFalsy();
+    });
+  });
+
+  describe('basic validation', () => {
+    it('properly tells if a value is a function', () => {
+      expect(isFunction(() => {})).toBeTruthy();
+      expect(isFunction(true)).toBeFalsy();
+      expect(isFunction('hi')).toBeFalsy();
+      expect(isFunction(8)).toBeFalsy();
+      expect(isFunction([])).toBeFalsy();
+      expect(isFunction({})).toBeFalsy();
+    });
   });
 });
