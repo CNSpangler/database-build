@@ -1,3 +1,8 @@
-const { isNumber } = require('./lib/types.js');
+const { 
+  isNumber,
+  castToString
+} = require('./lib/types.js');
 
 console.log(isNumber('3'));
+
+console.log(castToString(3));
