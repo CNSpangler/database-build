@@ -1,52 +1,111 @@
-# Type checking and casting
+# Schemas
 
-Type Checking
-: check that a value matches an expected type (e.g. string, number, boolean, etc.).
-
-Type casting
-: change a value into into a type (e.g. "1" -> 1, 12 -> "12", true -> 1).
+Schema
+: the pattern each item in a collection should match
 
 ## What?
 
-For this lab we'll be writing functions that will type check and type cast for
-us.
+### Validator
 
-### Type Checking
-
-Our type checking functions will take a value. It will return `true` if the value
-matches the type, otherwise it will return `false`
+`Validator` is a class that is used to check and cast a single field in an object.
 
 ```js
-isString('hi')
-// -> true
+class Validator {
+  constructor() {
 
-isNumber('hi')
-// -> false
+  }
+
+  validate(obj) {
+    // do work here
+  }
+}
+it('validates name', () => {
+  const nameValidator = new Validator('name', {
+    type: String,
+    required: true
+  });
+
+  expect(nameValidator.validate({ name: 'spot' })).toEqual('spot');
+})
+
+const spot = {
+  name: 'spot',
+  age: 5,
+  weight: '20 lbs'
+};
+
+const one = {
+  name: 1,
+  age: 10,
+  weight: '100 lbs'
+};
+
+const nameless = {
+  age: 10,
+  weight: '100 lbs'
+};
+
+nameValidator.validate(spot) // -> 'spot'
+nameValidator.validate(one) // -> '1'
+nameValidator.validate(nameless) // -> throws name is required
 ```
 
-### Type Casting
+`Validator` is instantiated with a field name and configuration:
 
-Our type casting functions will take a value. It will cast the value into a type
-if possible, otherwise it will `throw` an error.
+* `fieldName` is the name of the field that the validator will check
+* `configuration` is an object specifying the type of the field and whether it is required
+
+### Schema
+
+`Schema` class is used to validate and cast an entire object.
 
 ```js
-castToString(100)
-// -> '100'
+const schema = new Schema({
+  name: {
+    type: String,
+    required: true
+  },
+  age: {
+    type: Number,
+    required: true
+  },
+  weight: {
+    type: String
+  }
+});
 
-castToNumber('40')
-// -> 40
+const spot = {
+  name: 'spot',
+  age: 5,
+  weight: '20 lbs'
+};
 
-castToNumber('hi')
-// -> throw Cannot cast >>hi<< to Number
+const one = {
+  name: 1,
+  age: 10,
+  weight: '100 lbs'
+};
+
+const nameless = {
+  age: 10,
+  weight: '100 lbs'
+};
+
+schema.validate(spot) // returns { name: 'spot', age: 5, weight: '20 lbs' }
+schema.validate(one) // returns { name: '1', age: 10, weight: '100 lbs' }
+schema.validate(nameless) // throws invalid schema >> [name is required]
 ```
 
 ## Why?
 
-This is the initial step to building our database. As items are inserted into
-our database, we want to ensure that those items all match some pattern.
+Before we insert items into our database we want to make sure the item matches
+a schema. Our `Schema` class will return an item that we will insert into our
+database or error if we cannot insert the item into our database.
 
-The first step is to make sure that we type check each item.
+In order to validate each field we can create a `Validator` class that can check
+an individual field in an object.
 
 ## Where?
 
-Write your code in `lib/types.js` and your tests in `lib/types.test.js`.
+Write your code in `lib/Schema.js` and `lib/Validator.js`. Write your tests in
+`lib/Schema.test.js` and `lib/Validator.test.js`
