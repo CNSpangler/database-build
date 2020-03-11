@@ -1,8 +1,5 @@
 const { 
-  isNumber,
-  castToString
-} = require('./lib/types.js');
+  readJSON, 
+} = require('./lib/file-system.js');
 
-console.log(isNumber('3'));
-
-console.log(castToString(3));
+readJSON('./lib/test.txt');
